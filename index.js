@@ -21,7 +21,7 @@ MongoClient.connect(url, { "useUnifiedTopology": "true" }, (error, client) => {
             console.log('Found Documents: \n', result);
 
             dbOperation.updateDocument(database, { name: "Vadonut" }, { description: "What a vadonut" }, 'dishes', (result) => {
-                console.log('Document Updated:\n', result);
+                console.log('Document Updated:\n', result.result);
 
                 dbOperation.findDocuments(database, 'dishes', (result) => {
                     console.log('Found Documents: \n', result);
