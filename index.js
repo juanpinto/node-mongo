@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const asssert = require('assert');
+const dbOperation = require('./operations')
 
 const url = 'mongodb://localhost:27017/';
 const dbname = 'conFusion';
@@ -13,24 +14,24 @@ MongoClient.connect(url, { "useUnifiedTopology": "true" }, (error, client) => {
     const database = client.db(dbname);
     const collection = database.collection('dishes');
 
-    collection.insertOne({"name":"Uthappizza", "description": "testing"}, (error, result) =>{
-        asssert.equal(error, null);
+    dbOperation.insertDocument(database, { name: "Vadonut", description: "testing" }, 'dishes', (result) => {
+        console.log('Insert Document:\n', result.ops);
 
-        console.log('After insert \n');
-        console.log(result.ops);
+        dbOperation.findDocuments(database, 'dishes', (result) => {
+            console.log('Found Documents: \n', result);
 
-        //FIND ALL
-        collection.find({}).toArray((error, documents) => {
-            asssert.equal(error, null)
+            dbOperation.updateDocument(database, { name: "Vadonut" }, { description: "What a vadonut" }, 'dishes', (result) => {
+                console.log('Document Updated:\n', result);
 
-            console.log('Found \n')
-            console.log(documents)
+                dbOperation.findDocuments(database, 'dishes', (result) => {
+                    console.log('Found Documents: \n', result);
 
-            database.dropCollection('dishes', (error, result) => {
-                asssert.equal(error, null)
-                client.close
-            })
-        })
-    })
-    
+                    database.dropCollection('dishes', (result) => {
+                        console.log('Collection dropped: \n', result);
+                        client.close();
+                    })
+                });
+            });
+        });
+    });
 })
